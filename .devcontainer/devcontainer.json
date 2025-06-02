@@ -1,0 +1,70 @@
+{
+	"name": "Bevy Game Development",
+	"image": "mcr.microsoft.com/devcontainers/rust:1-1-bookworm",
+	
+	// Features to add to the dev container
+	"features": {
+		"ghcr.io/devcontainers/features/common-utils:2": {
+			"installZsh": true,
+			"configureZshAsDefaultShell": true,
+			"installOhMyZsh": true,
+			"upgradePackages": true
+		},
+		"ghcr.io/devcontainers/features/git:1": {
+			"ppa": true,
+			"version": "latest"
+		}
+	},
+
+	// System packages required for Bevy development
+	"postCreateCommand": "sudo apt-get update && sudo apt-get install -y pkg-config libx11-dev libasound2-dev libudev-dev libxkbcommon-x11-0 libwayland-dev libxrandr-dev libxi-dev vulkan-tools mesa-vulkan-drivers && rustup component add clippy rustfmt rust-analyzer",
+
+	// VS Code extensions for Rust/Bevy development
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"rust-lang.rust-analyzer",
+				"vadimcn.vscode-lldb",
+				"serayuzgur.crates",
+				"tamasfe.even-better-toml",
+				"formulahendry.code-runner",
+				"ms-vscode.cmake-tools",
+				"ms-vscode.cpptools"
+			],
+			"settings": {
+				"rust-analyzer.checkOnSave.command": "clippy",
+				"rust-analyzer.cargo.features": "all",
+				"rust-analyzer.procMacro.enable": true,
+				"rust-analyzer.cargo.loadOutDirsFromCheck": true,
+				"files.watcherExclude": {
+					"**/target/**": true
+				}
+			}
+		}
+	},
+
+	// Forward ports commonly used by Bevy applications
+	"forwardPorts": [8080, 3000],
+
+	// Mount the cargo cache to speed up builds
+	"mounts": [
+		"source=bevy-cargo-cache,target=/usr/local/cargo/registry,type=volume"
+	],
+
+	// Set environment variables for Bevy development
+	"containerEnv": {
+		"RUST_LOG": "info",
+		"BEVY_ASSET_ROOT": "/workspaces/my_bevy_game/assets"
+	},
+
+	// Enable X11 forwarding for graphics (if needed)
+	"runArgs": [
+		"--device=/dev/dri"
+	],
+
+	// Use 'postAttachCommand' to run commands after the container is created
+	"postAttachCommand": "cargo check",
+
+	// Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root
+	"remoteUser": "vscode"
+} 
